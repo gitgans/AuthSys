@@ -11,13 +11,19 @@ if __name__ == '__main__':
     capture.set(3,640)
     capture.set(4,480)
 
+    #opens file and reads the file (file handling)
+    with open('allowlist.txt') as f:
+        lock = f.read()
+
     #extracting the data from qrcode
     while (True):
         ret, frame = capture.read()
         for qrcode in decode(frame, symbols=[ZBarSymbol.QRCODE]):
             data = qrcode.data.decode("utf-8")
-            #printing the data
-            print(data)
+            #verifing scanned data == data on allowlist
+            if data in lock:
+                #printing the data
+                print(data)
         
         #setting window name and window closekwy
         cv2.imshow('AuthSys Scanning', frame)
