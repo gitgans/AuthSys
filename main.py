@@ -3,17 +3,32 @@ import cv2
 from pyzbar.pyzbar import decode
 from pyzbar.pyzbar import ZBarSymbol
 
-#this funtion activates when a person is authorized
+#this function activates when a person is authorized
+def process_logging():
+    import time
+    with open("logs.txt", "a") as f:
+        f.write(f"{data} - {time.ctime()}\n")
+        f.close()
+
+#this function activates when a person is authorized
 def process_auth():
     from playsound import playsound
     print(f"Authorized - {data}")
+    process_logging()
     playsound("auth.mp3")
 
-#this funtion activates when a person is unauthorized
+#this function activates when a person is unauthorized
 def process_unauth():
     from playsound import playsound
     print(f"Unauthorized - {data}")
     playsound("unauth.mp3")
+
+#this process restarts the program
+def process_restart():
+    import os
+    import sys
+    print("Restarting...")
+    os.execv(sys.executable, ['python'] + sys.argv)
 
 #main funtion
 if __name__ == '__main__':
@@ -35,10 +50,14 @@ if __name__ == '__main__':
             #verifing scanned data == data on allowlist
             if data in lock:
                 #if authourized do this
+                cv2.destroyAllWindows()
                 process_auth()
+                process_restart()
             else:
                 #if unauthourized do this
+                cv2.destroyAllWindows()
                 process_unauth()
+                process_restart()
         
         #setting window name and window closekwy
         cv2.imshow('AuthSys Scanning', frame)
